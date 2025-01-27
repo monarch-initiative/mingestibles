@@ -18,6 +18,7 @@ from monarch_ingest.cli_utils import (
     transform_one,
     transform_phenio,
     transform_all,
+    clone_release
 )
 
 import typer
@@ -173,6 +174,12 @@ def report():
 @typer_app.command()
 def prepare_release():
     do_prepare_release()
+
+@typer_app.command()
+def clone(release_ver: str = typer.Option("latest", help="Version of release to clone"),
+                  light: bool = typer.Option(False, help="Clone the primary artifacts but not all transform output"), 
+                  dev: bool = typer.Option(False, help="Clone from the dev bucket")):
+    clone_release(release_ver = release_ver, light = light, dev = dev)
 
 
 @typer_app.command()

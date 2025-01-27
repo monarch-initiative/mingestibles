@@ -588,3 +588,26 @@ def do_release(dir: str = OUTPUT_DIR, kghub: bool = False):
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         logger.error(f"Oh no! Something went wrong:\n{fname}:{exc_tb.tb_lineno} - {exc_type} - {exc_obj}")
         logger.error(f"Traceback: \n{e.stderr}")
+
+def clone_release(release_ver: str,
+                  light: bool = False, 
+                  dev: bool = False):
+
+    logger = get_logger()
+    logger.info(f"Cloning release: {release_ver}...")
+
+
+    os.makedirs("output", exist_ok=True)
+    os.makedirs("output/qc", exist_ok=True)
+
+    if dev:
+        kg_path = "monarch-kg-dev"
+    else:
+        kg_path = "monarch-kg"
+
+    if light:        
+        sh.gsutil(*f"-q -m cp -r gs://data-public-monarchinitiative/{kg_path}/{release_ver}/monarch-kg.tar.gz output/".split(" "))
+        sh.gsutil(*f"-q -m cp -r gs://data-public-monarchinitiative/{kg_path}/{release_ver}/qc/monarch-kg-dangling-edges.tsv.gz output/".split(" "))
+
+    else:
+        sh.gsutil(*f"-q -m cp -r gs://data-public-monarchinitiative/{kg_path}/{release_ver}/* output/".split(" "))
